@@ -1,6 +1,8 @@
+import datetime
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from .models import Role
+from .models import ResumeStatus, Role
 
 
 class UserCreate(BaseModel):
@@ -21,3 +23,25 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class ResumeOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    filename: str
+    status: ResumeStatus
+    error: str | None
+    created_at: datetime.datetime
+
+
+class ResumeDetail(ResumeOut):
+    text: str
+
+
+class SkillOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    skill_id: str
+    name: str
+    category: str
+    mentions: int
+    evidence: str
