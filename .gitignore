@@ -5,3 +5,4 @@ node_modules/
 *.db
 uploads/
 data/private/
+frontend/dist/

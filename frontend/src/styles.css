@@ -1,0 +1,68 @@
+:root {
+  --bg: #f5f6f8; --card: #ffffff; --text: #1f2430; --muted: #6b7280; --line: #e3e6ea;
+  --brand: #3b5bdb; --good: #2f9e44; --warn: #e67700; --bad: #e03131;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text); background: var(--bg);
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, h3 { margin: 0 0 0.5rem; }
+h2 { font-size: 1.1rem; }
+h3 { font-size: 0.95rem; margin-top: 1.25rem; }
+.page { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+header > div { display: flex; gap: 0.75rem; align-items: center; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; }
+label { display: block; font-size: 0.85rem; margin-bottom: 0.75rem; }
+input, textarea { display: block; width: 100%; margin-top: 0.25rem; padding: 0.55rem; font: inherit; border: 1px solid var(--line); border-radius: 8px; }
+textarea { resize: vertical; }
+button { font: inherit; cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.primary { background: var(--brand); color: #fff; border: 0; border-radius: 8px; padding: 0.6rem 1rem; }
+.primary.big { padding: 0.8rem 1.5rem; font-size: 1rem; }
+.link { background: none; border: 0; color: var(--brand); padding: 0.25rem; }
+.link.danger { color: var(--bad); }
+.muted { color: var(--muted); font-size: 0.85rem; }
+.error { color: var(--bad); }
+.notice { color: var(--good); }
+.banner { padding: 0.6rem 0.9rem; border-radius: 8px; background: #fff; border: 1px solid var(--line); }
+.center { text-align: center; margin-top: 3rem; }
+.auth { max-width: 380px; margin: 4rem auto; padding: 0 1rem; text-align: center; }
+.auth form { text-align: left; margin-top: 1rem; }
+.auth .primary { width: 100%; }
+.auth .link { display: block; margin: 0.75rem auto 0; }
+.upload { display: block; padding: 1rem; text-align: center; border: 2px dashed var(--line); border-radius: 10px; cursor: pointer; }
+.upload input { display: none; }
+.list { list-style: none; padding: 0; margin: 1rem 0 0; }
+.row { display: flex; align-items: center; gap: 0.5rem; }
+.item { flex: 1; display: flex; justify-content: space-between; gap: 0.5rem; text-align: left; padding: 0.55rem 0.7rem; margin-bottom: 0.4rem; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.item.selected { border-color: var(--brand); background: #edf2ff; }
+.actions { display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0; }
+.badge { font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 99px; background: #eceff3; }
+.badge.parsed { background: #d3f9d8; color: #2b8a3e; }
+.badge.failed { background: #ffe3e3; color: var(--bad); }
+.badge.required { background: #ffe3e3; color: #a61e1e; }
+.badge.preferred { background: #fff3bf; color: #8a5a00; }
+.badge.prerequisite { background: #e5dbff; color: #5f3dc4; }
+.score { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+.score-number { font-size: 3.2rem; font-weight: 700; color: var(--brand); line-height: 1; }
+.score-number span { font-size: 1.5rem; }
+.bars { flex: 1; min-width: 240px; }
+.bar-row { display: grid; grid-template-columns: 150px 1fr 48px; gap: 0.5rem; align-items: center; font-size: 0.85rem; margin: 0.35rem 0; }
+.bar { height: 10px; background: #eceff3; border-radius: 99px; overflow: hidden; }
+.bar-fill { height: 100%; }
+.bar-fill.main { background: var(--brand); }
+.bar-fill.base { background: #adb5bd; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chip { padding: 0.25rem 0.65rem; border-radius: 99px; font-size: 0.85rem; border: 1px solid; }
+.chip small { opacity: 0.8; }
+.chip.good { color: #2b8a3e; background: #ebfbee; border-color: #b2f2bb; }
+.chip.warn { color: #9c5700; background: #fff9db; border-color: #ffe066; }
+.chip.bad { color: #a61e1e; background: #fff5f5; border-color: #ffc9c9; }
+.chip.neutral { color: #495057; background: #f1f3f5; border-color: var(--line); }
+.path { padding-left: 1.3rem; }
+.path li { margin-bottom: 0.7rem; }
+details { margin-top: 1.25rem; }
+summary { cursor: pointer; margin-bottom: 0.5rem; }
