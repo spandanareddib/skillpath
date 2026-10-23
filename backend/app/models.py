@@ -56,3 +56,25 @@ class ResumeSkill(Base):
     category: Mapped[str] = mapped_column(String(60))
     mentions: Mapped[int] = mapped_column(default=1)
     evidence: Mapped[str] = mapped_column(String(300), default="")
+
+
+class Job(Base):
+    __tablename__ = "jobs"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    title: Mapped[str] = mapped_column(String(200))
+    company: Mapped[str] = mapped_column(String(200), default="")
+    description: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class JobSkill(Base):
+    __tablename__ = "job_skills"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    job_id: Mapped[int] = mapped_column(ForeignKey("jobs.id"), index=True)
+    skill_id: Mapped[str] = mapped_column(String(60))
+    name: Mapped[str] = mapped_column(String(80))
+    category: Mapped[str] = mapped_column(String(60))
+    required: Mapped[bool] = mapped_column(default=True)
