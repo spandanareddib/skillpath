@@ -5,9 +5,21 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..deps import get_current_user
 from ..models import Job, JobSkill, Resume, ResumeSkill, ResumeStatus, User
-from ..schemas import JobCreate, JobDetail, JobOut, JobSkillOut, MatchOut
+from ..schemas import (
+    GapOut,
+    JobCreate,
+    JobDetail,
+    JobOut,
+    JobSkillOut,
+    MatchOut,
+    NearSkillOut,
+    PathStepOut,
+)
 from ..services.jobs import extract_job_skills
-from ..services.matching import SkillRef, compute_match
+from ..services.matching import MatchResult, SkillRef, compute_match
+from ..services.pathing import build_learning_path
+from ..services.relations import load_prerequisites, load_relations
+from ..services.skills import load_vocabulary
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
@@ -49,6 +61,49 @@ def _detail(db: Session, job: Job) -> JobDetail:
 
 def _out(s: SkillRef) -> JobSkillOut:
     return JobSkillOut(skill_id=s.skill_id, name=s.name, category=s.category, required=s.required)
+
+
+def _analyse(db: Session, job_id: int, resume_id: int, user: User):
+    """Shared by /match and /gap: load both sides and score them."""
+    job = _owned_job(db, job_id, user)
+    resume = db.get(Resume, resume_id)
+    if resume is None or resume.user_id != user.id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Resume not found")
+    if resume.status != ResumeStatus.parsed:
+        raise HTTPException(status.HTTP_409_CONFLICT, "This resume has no extracted text")
+
+    job_skills = [SkillRef(s.skill_id, s.name, s.category, s.required) for s in _job_skills(db, job.id)]
+    if not job_skills:
+        raise HTTPException(status.HTTP_409_CONFLICT, "No known skills were found in this job description")
+    resume_skills = [
+        SkillRef(s.skill_id, s.name, s.category)
+        for s in db.scalars(select(ResumeSkill).where(ResumeSkill.resume_id == resume.id))
+    ]
+    result = compute_match(job_skills, resume_skills, load_relations())
+    return job, resume, resume_skills, result
+
+
+def _match_out(job: Job, resume: Resume, result: MatchResult) -> dict:
+    return dict(
+        job_id=job.id,
+        resume_id=resume.id,
+        score=result.score,
+        exact_score=result.exact_score,
+        matched=[_out(s) for s in result.matched],
+        near=[
+            NearSkillOut(
+                skill_id=n.skill.skill_id,
+                name=n.skill.name,
+                category=n.skill.category,
+                required=n.skill.required,
+                credit=n.credit,
+                via=n.via,
+            )
+            for n in result.near
+        ],
+        missing=[_out(s) for s in result.missing],
+        extra=result.extra,
+    )
 
 
 @router.post("", response_model=JobDetail, status_code=status.HTTP_201_CREATED)
@@ -103,27 +158,24 @@ def match_resume_to_job(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    job = _owned_job(db, job_id, user)
-    resume = db.get(Resume, resume_id)
-    if resume is None or resume.user_id != user.id:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Resume not found")
-    if resume.status != ResumeStatus.parsed:
-        raise HTTPException(status.HTTP_409_CONFLICT, "This resume has no extracted text")
+    job, resume, _, result = _analyse(db, job_id, resume_id, user)
+    return MatchOut(**_match_out(job, resume, result))
 
-    job_skills = [SkillRef(s.skill_id, s.name, s.category, s.required) for s in _job_skills(db, job.id)]
-    if not job_skills:
-        raise HTTPException(status.HTTP_409_CONFLICT, "No known skills were found in this job description")
-    resume_skills = [
-        SkillRef(s.skill_id, s.name, s.category)
-        for s in db.scalars(select(ResumeSkill).where(ResumeSkill.resume_id == resume.id))
-    ]
 
-    result = compute_match(job_skills, resume_skills)
-    return MatchOut(
-        job_id=job.id,
-        resume_id=resume.id,
-        score=result.score,
-        matched=[_out(s) for s in result.matched],
-        missing=[_out(s) for s in result.missing],
-        extra=result.extra,
+@router.get("/{job_id}/gap", response_model=GapOut)
+def gap_analysis(
+    job_id: int,
+    resume_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Match result plus an ordered learning path for everything the resume lacks."""
+    job, resume, resume_skills, result = _analyse(db, job_id, resume_id, user)
+    targets = [n.skill for n in result.near] + result.missing
+    steps = build_learning_path(
+        targets,
+        {s.skill_id for s in resume_skills},
+        load_prerequisites(),
+        load_vocabulary().skills,
     )
+    return GapOut(**_match_out(job, resume, result), path=[PathStepOut(**vars(s)) for s in steps])

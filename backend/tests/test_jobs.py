@@ -73,3 +73,28 @@ def test_perfect_and_zero_scores():
 def test_job_without_skills_is_an_error():
     with pytest.raises(ValueError):
         compute_match([], [S("python")])
+
+
+def test_related_skill_earns_partial_credit():
+    job = [S("postgresql"), S("python")]
+    relations = {frozenset(("postgresql", "sql")): 0.7}
+    result = compute_match(job, [S("python"), S("sql")], relations)
+    assert result.exact_score == 50.0            # only Python matches literally
+    assert result.score == 85.0                  # (1 + 0.7) / 2
+    assert [(n.skill.skill_id, n.credit, n.via) for n in result.near] == [("postgresql", 0.7, "Sql")]
+    assert result.missing == []
+
+
+def test_best_related_skill_wins_and_pair_order_does_not_matter():
+    job = [S("postgresql")]
+    relations = {frozenset(("sql", "postgresql")): 0.7, frozenset(("postgresql", "sqlite")): 0.5}
+    result = compute_match(job, [S("sqlite"), S("sql")], relations)
+    assert result.near[0].credit == 0.7
+
+
+def test_exact_match_beats_relation_and_no_relations_means_baseline():
+    job = [S("sql")]
+    relations = {frozenset(("sql", "postgresql")): 0.7}
+    result = compute_match(job, [S("sql"), S("postgresql")], relations)
+    assert result.score == 100.0 and result.near == []
+    assert compute_match(job, [S("postgresql")]).score == 0.0

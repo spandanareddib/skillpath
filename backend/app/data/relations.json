@@ -1,0 +1,23 @@
+{"pairs": [
+["sql", "postgresql", 0.7], ["sql", "mysql", 0.7], ["sql", "sqlite", 0.7],
+["postgresql", "mysql", 0.7], ["postgresql", "sqlite", 0.5], ["mysql", "sqlite", 0.5],
+["mongodb", "sql", 0.3], ["mongodb", "postgresql", 0.3], ["mongodb", "mysql", 0.3], ["mongodb", "mongoose", 0.5],
+["flask", "fastapi", 0.7], ["django", "fastapi", 0.5], ["django", "flask", 0.6],
+["nodejs", "expressjs", 0.6], ["expressjs", "fastapi", 0.4],
+["react", "nextjs", 0.7], ["react", "react-flow", 0.5], ["javascript", "typescript", 0.7],
+["aws", "azure", 0.6], ["aws", "gcp", 0.6], ["azure", "gcp", 0.6], ["vercel", "aws", 0.3],
+["docker", "kubernetes", 0.4], ["git", "github", 0.8],
+["tensorflow", "pytorch", 0.7], ["keras", "tensorflow", 0.8],
+["scikit-learn", "machine-learning", 0.7], ["deep-learning", "machine-learning", 0.7],
+["tensorflow", "deep-learning", 0.6], ["pytorch", "deep-learning", 0.6],
+["nlp", "machine-learning", 0.6], ["llm", "nlp", 0.6], ["llm", "machine-learning", 0.5],
+["llm", "generative-ai", 0.8], ["openai-api", "llm", 0.7], ["gemini-api", "llm", 0.7],
+["openai-api", "generative-ai", 0.6], ["gemini-api", "openai-api", 0.8],
+["langchain", "llm", 0.6], ["rag", "llm", 0.6],
+["prompt-engineering", "llm", 0.7], ["prompt-engineering", "generative-ai", 0.6],
+["structured-extraction", "prompt-engineering", 0.5], ["hugging-face", "machine-learning", 0.4],
+["pandas", "numpy", 0.4], ["statistics", "machine-learning", 0.4],
+["matplotlib", "data-visualization", 0.8], ["power-bi", "tableau", 0.7],
+["power-bi", "data-visualization", 0.7], ["tableau", "data-visualization", 0.7],
+["mlops", "llmops", 0.6]
+]}

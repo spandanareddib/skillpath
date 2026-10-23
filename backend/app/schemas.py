@@ -74,10 +74,35 @@ class JobDetail(JobOut):
     skills: list[JobSkillOut]
 
 
+class NearSkillOut(BaseModel):
+    skill_id: str
+    name: str
+    category: str
+    required: bool
+    credit: float
+    via: str
+
+
 class MatchOut(BaseModel):
     job_id: int
     resume_id: int
     score: float
+    exact_score: float
     matched: list[JobSkillOut]
+    near: list[NearSkillOut]
     missing: list[JobSkillOut]
     extra: list[str]
+
+
+class PathStepOut(BaseModel):
+    step: int
+    skill_id: str
+    name: str
+    category: str
+    priority: str
+    reason: str
+    depends_on: list[str]
+
+
+class GapOut(MatchOut):
+    path: list[PathStepOut]

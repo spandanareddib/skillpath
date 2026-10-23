@@ -1,0 +1,14 @@
+{"prerequisites": {
+"postgresql": ["sql"], "mysql": ["sql"],
+"fastapi": ["python", "rest-api"], "flask": ["python"], "django": ["python"],
+"react": ["javascript"], "nextjs": ["react"], "typescript": ["javascript"],
+"nodejs": ["javascript"], "expressjs": ["nodejs"], "tailwind": ["css"], "css": ["html"],
+"kubernetes": ["docker"], "ci-cd": ["git"], "github": ["git"],
+"machine-learning": ["python", "statistics"], "deep-learning": ["machine-learning"],
+"scikit-learn": ["python", "machine-learning"], "tensorflow": ["deep-learning"],
+"pytorch": ["deep-learning"], "keras": ["deep-learning"], "nlp": ["machine-learning"],
+"llm": ["python"], "prompt-engineering": ["llm"], "rag": ["llm"], "langchain": ["llm", "python"],
+"hugging-face": ["python", "machine-learning"], "mlops": ["machine-learning", "docker"],
+"pandas": ["python"], "numpy": ["python"], "matplotlib": ["python"],
+"graphql": ["rest-api"], "authentication": ["rest-api"]
+}}
